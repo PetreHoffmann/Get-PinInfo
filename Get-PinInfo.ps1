@@ -35,8 +35,8 @@ Import-Module Lync
 
 
 #global variables need to be set
-$from = "skype4b@p3-group.com"
-$smtp = "cas.p3-group.com"
+$from = ""
+$smtp = ""
 $mailsubject = "Skype for Business Pin Notification"
 #get dialin URL from topology
 $SimpleURLEntries = Get-CsSimpleUrlConfiguration -Identity Global | select SimpleUrl
@@ -47,18 +47,33 @@ $counter = 0
 
 #Create a progress bar
 Write-Host "Searching for Lync Users. Please wait!" -ForegroundColor Green
-Write-Progress -Id 1001 -Activity “Processing Lync Users...” -status “Lync Users already completed: 20%” -percentComplete (20)
+Write-Progress -Id 1001 -Activity â€œProcessing Lync Users...â€ -status â€œLync Users already completed: 20%â€ -percentComplete (20)
 #Import the group member list
 $Members = Get-ADGroup $CSGroup -Properties members | select -ExpandProperty members | Get-ADUser -Properties samaccountname, givenname, mail | select samaccountname, givenname, mail
 #close progress bar
-Write-Progress -Id 1001 -Activity “Processing Lync Users...” -status “Lync Users already completed: 100%” -percentComplete (100)
+Write-Progress -Id 1001 -Activity â€œProcessing Lync Users...â€ -status â€œLync Users already completed: 100%â€ -percentComplete (100)
 Start-Sleep(1)
-Write-Progress -Id 1001 -Activity “Processing Lync Users...” -Completed
+Write-Progress -Id 1001 -Activity â€œProcessing Lync Users...â€ -Completed
 
 #read the total number of users available in AD Group
 $membersCount = $Members.Count
 
-ForEach ($user in $Members){    $samaccountname = $user.samaccountname    $mailaddress = $user.mail    $username = $user.givenname        #ingreasing the progress counter    $counter++        write-host "Processing:" $samaccountname -ForegroundColor Yellow    $enabled = Get-CsUser -filter {SamAccountName -eq $SamAccountName}     # Check if user is enabled for Lync 2013 pool    if ($enabled.RegistrarPool -ne $null)    {
+ForEach ($user in $Members)
+{
+Â Â Â Â $samaccountname = $user.samaccountname
+    $mailaddress = $user.mail
+    $username = $user.givenname
+    
+    #ingreasing the progress counter
+    $counter++
+    
+Â Â Â Â write-host "Processing:" $samaccountname -ForegroundColor Yellow
+
+Â Â Â Â $enabled = Get-CsUser -filter {SamAccountName -eq $SamAccountName}
+Â 
+Â Â Â Â # Check if user is enabled for Lync 2013 pool
+Â Â Â Â if ($enabled.RegistrarPool -ne $null)
+Â Â Â Â {
         #ask users pin expiration date
         $usersPin = Get-CsClientPinInfo -Identity $samaccountname | Select-Object PinExpirationTime, IsPinSet
         $userExpirationTime = $usersPin.PinExpirationTime
@@ -118,6 +133,6 @@ ForEach ($user in $Members){    $samaccountname = $user.samaccountname    $ma
             Write-Host "You have no PIN set. Please set a PIN to use dial in capabilities" -ForegroundColor Red
         }
     }
-    Write-Progress -Id 1000 -Activity “Processing Lync Users...” -status “Lync Users already completed: $counter from $membersCount” -percentComplete ($counter / $Members.Count*100)
+    Write-Progress -Id 1000 -Activity â€œProcessing Lync Users...â€ -status â€œLync Users already completed: $counter from $membersCountâ€ -percentComplete ($counter / $Members.Count*100)
 }
-Write-Progress -Id 1000 -Activity “Processing Lync Users...” -Completed
+Write-Progress -Id 1000 -Activity â€œProcessing Lync Users...â€ -Completed
