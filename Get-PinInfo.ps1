@@ -11,6 +11,7 @@ v1.1.0 - 16.04.2016 - Reduced console output
                       created summary
                       added progress bars
                       added event log switch and entries
+V1.1.1 - 19.04.2016 - Added additional checks AD Group and loaded module availability
 
 .EXAMPLE
 .\Get-PinInfo.ps1 -CSGroup Company_Skype_for_Business_Users
@@ -33,20 +34,22 @@ The script must run with elevated privilege and can only be run in one Lync 2013
 #>
 
 Param(
-   [Parameter(Mandatory=$true, HelpMessage="Enter an AD Group:", ValueFromPipeline = $true)]
-   [string]$CSGroup,
+   [string]$CSGroup = (Read-Host -Prompt "Please enter the AD Group"),
    [parameter(ValueFromPipeline = $false, ValueFromPipelineByPropertyName = $true)]
    [switch]$ToEvents
 )
 
+#load and check the modules
 Import-Module ActiveDirectory
 Import-Module Lync
-
+$ModuleAD = Get-Module ActiveDirectory
+$moduleLync = Get-Module Lync
+if (($ModuleAD -eq $null) -or ($moduleLync -eq $null)) { Write-Warning "At least one of the module is not available on this computer"; break; }
 
 #global variables need to be set
 #mail settings
-$from = ""
-$smtp = ""
+$from = "skype4b@p3-group.com"
+$smtp = "cas.p3-group.com"
 $mailsubject = "Skype for Business Pin Notification"
 #get dialin URL from topology
 $SimpleURLEntries = Get-CsSimpleUrlConfiguration -Identity Global | select SimpleUrl
@@ -60,6 +63,9 @@ $countExpiredPin = 0
 #object for saving users that have received mails
 [System.Collections.ArrayList]$mailedUsers = @()
 
+#check if AD Group exist
+$check = Get-ADGroup $CSGroup
+if($check -eq $null) { Write-Warning "Active Directory Group $CSGroup do not exist"; break }
 
 #Create a interminate progress bar
 $i = 0
