@@ -2,6 +2,10 @@
 ##### This is a script to send mail to the user who Lync dialin PIN will expire
 ---
 ### Changelog
+  
+#### v1.1.1 - 19.04.2016
+* Added additional checks AD Group and loaded module availability
+  
 #### v1.1.0 - 16.04.2016
 * Reduced console output
 * created summary
