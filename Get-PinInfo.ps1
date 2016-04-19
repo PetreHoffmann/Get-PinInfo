@@ -48,8 +48,8 @@ if (($ModuleAD -eq $null) -or ($moduleLync -eq $null)) { Write-Warning "At least
 
 #global variables need to be set
 #mail settings
-$from = "skype4b@p3-group.com"
-$smtp = "cas.p3-group.com"
+$from = ""
+$smtp = "m"
 $mailsubject = "Skype for Business Pin Notification"
 #get dialin URL from topology
 $SimpleURLEntries = Get-CsSimpleUrlConfiguration -Identity Global | select SimpleUrl
