@@ -22,4 +22,4 @@
     .\Get-Pininfo.ps1 -CSGroup Groupname -ToEvents
 > The summary will be saved in event logs
 
-[Visit my website](https://www.petrecalinoiu.com)
+[Visit my website](https://train2play.eu)
