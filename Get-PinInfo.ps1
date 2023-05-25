@@ -1,10 +1,10 @@
 <#
 
 .SYNOPSIS
-This is a script to send mail to the user who Lync dialin PIN will expire
+This is a script to send mail to the user who Lync/Skype for Business dialin PIN will expire
 
 .DESCRIPTION
-Original Script (v1.0) created by Petre Calinoiu (PCA)
+Original Script (v1.0) created by Petre Hoffmann
 Changelog:
 v1.0.0 - 13.04.2016 - Original Script (PCA)
 v1.1.0 - 16.04.2016 - Reduced console output
@@ -15,21 +15,21 @@ V1.1.1 - 19.04.2016 - Added additional checks AD Group and loaded module availab
 
 .EXAMPLE
 .\Get-PinInfo.ps1 -CSGroup Company_Skype_for_Business_Users
-Using CSGroup parameter to provide the active directory group with the lync users
+Using CSGroup parameter to provide the active directory group with the lync/skype for business users
 
 .EXAMPLE
 .\Get-PinInfo.ps1 -CSGroup Company_Skype_for_Business_Users -ToEvents
 Using the ToEvents switch, the output summary will be written in Event Logs
 
 .PARAMETER CSGroup
-The name of an Active Directory group which includes all Lync users
+The name of an Active Directory group which includes all Lync/skype for business users
 
 .PARAMETER ToEvents
 Switch activates the output to the events log
 
 .NOTES
 You need to run this script as a member of the CSAdministrators group; doing so is the only way to ensure you have permission to query data.
-The script must run with elevated privilege and can only be run in one Lync 2013 Front-End Server
+The script must run with elevated privilege and can only be run in one Lync/Skype for Business Front-End Server
 
 #>
 
@@ -101,7 +101,7 @@ ForEach ($user in $Members)
 
     $enabled = Get-CsUser -filter {SamAccountName -eq $SamAccountName}
  
-    # Check if user is enabled for Lync 2013 pool
+    # Check if user is enabled for Lync/Skype for Business pool
     if ($enabled.RegistrarPool -ne $null)
     {
         #ask users pin expiration date
@@ -173,7 +173,7 @@ ForEach ($user in $Members)
             $countNoPin++
         }
     }
-    Write-Progress -Id 1000 -Activity “Processing Lync Users...” -status “Lync Users already completed: $counter from $membersCount” -percentComplete ($counter / $Members.Count*100)
+    Write-Progress -Id 1000 -Activity “Processing Lync/Skype for Business Users...” -status “Lync Users already completed: $counter from $membersCount” -percentComplete ($counter / $Members.Count*100)
 }
 Write-Progress -Id 1000 -Activity “Processing Lync Users...” -Completed
 
